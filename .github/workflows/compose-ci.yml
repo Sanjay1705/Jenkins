@@ -25,15 +25,12 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
 
-
       - name: Build and start services
-        run: |
-          docker compose up --build -d
-          # wait for services (simple wait, or check health)
+        run: docker compose -f Practical-01/docker-compose.yml up --build -d
           sleep 5
 
       - name: Run tests inside web container
-        run: docker compose exec -T web pytest -q
+        run: docker compose -f Practical-01/docker-compose.yml exec -T web pytest -q
 
       - name: Hit health and root endpoints from runner
         run: |
@@ -44,4 +41,4 @@ jobs:
 
       - name: Tear down
         if: always()
-        run: docker compose down --volumes --remove-orphans
+        run: docker compose -f Practical-01/docker-compose.yml down --volumes --remove-orphans
