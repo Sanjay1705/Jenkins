@@ -1,0 +1,43 @@
+name: Test + Coverage + Docker Push
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Practical-02/**'
+      - '.github/workflows/docker-push.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Practical-02/**'
+      - '.github/workflows/docker-push.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=app --cov-fail-under=80
+      
+
+      - name: Log in to Docker
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t myuser/flask-redis-app:${{ github.sha }} .
+
+      - name: Push Docker image
+        run: docker push myuser/flask-redis-app:${{ github.sha }}
