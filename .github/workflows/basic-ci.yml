@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository 
-      - uses: actions/chechout@v4         
+      - uses: actions/checkout@v4         
 
       - name: Confirm push
       - uses: echo "Code Push Successfully"
-      
